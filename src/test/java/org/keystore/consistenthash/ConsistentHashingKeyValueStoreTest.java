@@ -1,18 +1,17 @@
-package org.keystore.rehashing;
+package org.keystore.consistenthash;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.keystore.KeyValueStore;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.keystore.KeyValueStore;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.keystore.KeyStoreTestUtils.addDataToStore;
 import static org.keystore.KeyStoreTestUtils.allKeyValuePairsFrom;
 
-class RehashingKeyValueStoreTest {
-
+class ConsistentHashingKeyValueStoreTest {
     private final Map<String, String> data = new HashMap<>();
 
     @BeforeEach
@@ -25,20 +24,20 @@ class RehashingKeyValueStoreTest {
 
     @Test
     void putAndGetShouldBeConsistentWithAStaticNumberOfNodes() {
-        var store = KeyValueStore.rehashing(
-            "node1", "node2", "node3", "node4"
+        var store = KeyValueStore.constentHashing(
+                "node1", "node2", "node3", "node4"
         );
 
         addDataToStore(data, store);
 
         assertThat(allKeyValuePairsFrom(data, store))
-            .containsAllEntriesOf(data);
+                .containsAllEntriesOf(data);
     }
 
     @Test
     void addingNewNodeShouldNotChangeDataDistribution() {
-        var store = KeyValueStore.rehashing(
-            "node1", "node2", "node3", "node4"
+        var store = KeyValueStore.constentHashing(
+                "node1", "node2", "node3", "node4"
         );
 
         addDataToStore(data, store);
@@ -48,13 +47,13 @@ class RehashingKeyValueStoreTest {
         store.addNode("node5");
 
         assertThat(allKeyValuePairsFrom(data, store))
-            .containsAllEntriesOf(dataBeforeAddingNode);
+                .containsAllEntriesOf(dataBeforeAddingNode);
     }
 
     @Test
     void removingNodeShouldNotChangeDataDistribution() {
-        var store = KeyValueStore.rehashing(
-            "node1", "node2", "node3", "node4"
+        var store = KeyValueStore.constentHashing(
+                "node1", "node2", "node3", "node4"
         );
 
         addDataToStore(data, store);
@@ -64,13 +63,13 @@ class RehashingKeyValueStoreTest {
         store.removeNode("node4");
 
         assertThat(allKeyValuePairsFrom(data, store))
-            .containsAllEntriesOf(dataBeforeRemovingNode);
+                .containsAllEntriesOf(dataBeforeRemovingNode);
     }
 
     @Test
     void dataShouldBeDistributedEvenlyAmongNodes() {
-        var store = KeyValueStore.rehashing(
-            "node1", "node2", "node3", "node4"
+        var store = KeyValueStore.constentHashing(
+                "node1", "node2", "node3", "node4"
         );
 
         addDataToStore(data, store);
@@ -81,10 +80,10 @@ class RehashingKeyValueStoreTest {
         for (var node : nodes) {
             var actualDataSize = node.data().size();
             assertThat(actualDataSize)
-                .isBetween(
-                    expectedDataPerNode - 1,
-                    expectedDataPerNode + 1
-                );
+                    .isBetween(
+                            expectedDataPerNode - 1,
+                            expectedDataPerNode + 1
+                    );
         }
     }
 

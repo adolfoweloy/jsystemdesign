@@ -1,5 +1,6 @@
 package org.keystore;
 
+import org.keystore.consistenthash.ConsistentHashingKeyValueStore;
 import org.keystore.rehashing.RehashingKeyValueStore;
 
 public interface KeyValueStore extends KeyValueStoreClient, KeyValueStoreManager {
@@ -8,4 +9,7 @@ public interface KeyValueStore extends KeyValueStoreClient, KeyValueStoreManager
         return new RehashingKeyValueStore(nodes);
     }
 
+    static KeyValueStore constentHashing(String...nodes) {
+        return new ConsistentHashingKeyValueStore(nodes);
+    }
 }
