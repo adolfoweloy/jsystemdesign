@@ -43,7 +43,6 @@ public class RehashingKeyValueStore implements KeyValueStore {
     }
 
     private NodeServer getServer(HashNumber hash) {
-        // determine the server to store the value
         int index = hash.hash() % nodes.size();
         return nodes.get(index);
     }
@@ -57,7 +56,6 @@ public class RehashingKeyValueStore implements KeyValueStore {
         allServers.addAll(currentServers);
         allServers.add(new NodeServer(newNode, new HashMap<>()));
 
-        // get all key-value pairs
         rehash(allServers);
     }
 
@@ -71,6 +69,10 @@ public class RehashingKeyValueStore implements KeyValueStore {
         rehash(allServers);
     }
 
+    /**
+     * Rehashing affects all key-value pairs in the stores proving to be an inefficient way to
+     * distribute data among nodes in a distributed key-value storage system.
+     */
     private void rehash(List<NodeServer> allServers) {
         // get all key-value pairs
         var keyValues = getCurrentKeyValues();
