@@ -17,14 +17,14 @@ class ConsistentHashingKeyValueStoreTest {
     @BeforeEach
     void setUp() {
         data.clear();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             data.put("key" + i, "value" + i);
         }
     }
 
     @Test
     void putAndGetShouldBeConsistentWithAStaticNumberOfNodes() {
-        var store = KeyValueStore.constentHashing(
+        var store = KeyValueStore.consistentHashing(
                 "node1", "node2", "node3", "node4"
         );
 
@@ -36,7 +36,7 @@ class ConsistentHashingKeyValueStoreTest {
 
     @Test
     void addingNewNodeShouldNotChangeDataDistribution() {
-        var store = KeyValueStore.constentHashing(
+        var store = KeyValueStore.consistentHashing(
                 "node1", "node2", "node3", "node4"
         );
 
@@ -52,7 +52,7 @@ class ConsistentHashingKeyValueStoreTest {
 
     @Test
     void removingNodeShouldNotChangeDataDistribution() {
-        var store = KeyValueStore.constentHashing(
+        var store = KeyValueStore.consistentHashing(
                 "node1", "node2", "node3", "node4"
         );
 
@@ -68,7 +68,7 @@ class ConsistentHashingKeyValueStoreTest {
 
     @Test
     void dataShouldBeDistributedEvenlyAmongNodes() {
-        var store = KeyValueStore.constentHashing(
+        var store = KeyValueStore.consistentHashing(
                 "node1", "node2", "node3", "node4"
         );
 

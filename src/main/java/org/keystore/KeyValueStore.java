@@ -9,7 +9,7 @@ public interface KeyValueStore extends KeyValueStoreClient, KeyValueStoreManager
         return new RehashingKeyValueStore(nodes);
     }
 
-    static KeyValueStore constentHashing(String...nodes) {
+    static KeyValueStore consistentHashing(String...nodes) {
         return new ConsistentHashingKeyValueStore(nodes);
     }
 }

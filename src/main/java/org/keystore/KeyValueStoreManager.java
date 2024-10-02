@@ -8,5 +8,5 @@ public interface KeyValueStoreManager {
 
     void removeNode(String nodeToRemove);
 
-    List<NodeServer> nodeServers();
+    List<NodeServerWithData> nodeServers();
 }
