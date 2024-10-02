@@ -4,6 +4,8 @@ import com.google.common.hash.Hashing;
 import org.keystore.KeyValueStore;
 import org.keystore.NodeServerWithData;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,16 +14,22 @@ import java.util.TreeMap;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class ConsistentHashingKeyValueStore implements KeyValueStore {
-    private final TreeMap<String, NodeServer> ring = new TreeMap<>();
-    private final Map<NodeServer, Map<String, String>> values = new HashMap<>();
+    private final TreeMap<String, TreeMap<String, String>> ring = new TreeMap<>(); // virtual node hash -> key values
+    private final Map<String, List<VirtualNode>> vtnMap = new HashMap<>(); // node server name -> list of VirtualNodes
+
+    private static final int replicas = 100;
 
     public ConsistentHashingKeyValueStore(String... nodes) {
-        // build the ring
         for (String node : nodes) {
             var nodeServer = new NodeServer(node);
-            var hash = getHash(node);
-            ring.put(hash, nodeServer);
-            values.put(nodeServer, new HashMap<>());
+
+            for (int i = 0; i < replicas; i++) {
+                var hash = getHash(node + i);
+                var virtualNode = new VirtualNode(hash, nodeServer, i);
+                ring.put(virtualNode.hash(), new TreeMap<>());
+                vtnMap.computeIfAbsent(nodeServer.name(), k -> new ArrayList<>()).add(virtualNode);
+            }
+
         }
     }
 
@@ -33,8 +41,8 @@ public class ConsistentHashingKeyValueStore implements KeyValueStore {
             entry = ring.firstEntry();
         }
 
-        var nodeServer = entry.getValue();
-        values.get(nodeServer).put(key, value);
+        var map = entry.getValue();
+        map.put(getHash(key), value);
     }
 
     @Override
@@ -45,47 +53,67 @@ public class ConsistentHashingKeyValueStore implements KeyValueStore {
             entry = ring.firstEntry();
         }
 
-        var nodeServer = entry.getValue();
-        return values.get(nodeServer).get(key);
+        var map = entry.getValue();
+        return map.get(getHash(key));
     }
 
     @Override
-    public void addNode(String newNode) {
-        var newNodeServer = new NodeServer(newNode);
-        var hash = getHash(newNode);
+    public void addNode(String newNodeName) {
+        var newNode = new NodeServer(newNodeName);
+        vtnMap.put(newNodeName, new ArrayList<>());
 
-        // get current node server and its values
-        var currentNodeEntry = ring.tailMap(hash).firstEntry();
-        if (currentNodeEntry == null) {
-            currentNodeEntry = ring.firstEntry();
+        for (int i=0; i < replicas; i++) {
+            var hash = getHash(newNodeName + i);
+            var virtualNode = new VirtualNode(hash, newNode, i);
+
+            // before adding to the ring, find the current server and its values
+            var first = ring.tailMap(hash).firstEntry(); // this is the hash of the new VTN
+            if (first == null) {
+                first = ring.firstEntry();
+            }
+
+            var currentVirtualNodeHash = first.getKey();
+            var currentVirtualNodeValues = first.getValue();
+
+
+            // remap values to the new VTN before adding it to the ring
+            // get keys that are smaller than current VTN hash within currentVirtualNodeValues
+            var valuesToRemap = currentVirtualNodeValues.headMap(hash);
+            var valuesToKeep = currentVirtualNodeValues.tailMap(hash);
+
+
+            ring.put(hash, new TreeMap<>(valuesToRemap));
+            ring.put(currentVirtualNodeHash, new TreeMap<>(valuesToKeep));
+
+            vtnMap.get(newNode.name()).add(virtualNode);
         }
-        var previousNodeServer = currentNodeEntry.getValue();
-        var previousNodeValues = values.get(previousNodeServer);
-
-        // adding the new node server
-        ring.put(hash, newNodeServer);
-
-        values.put(newNodeServer, new HashMap<>(previousNodeValues));
-        values.put(previousNodeServer, new HashMap<>());
     }
 
     @Override
     public void removeNode(String nodeToRemove) {
-        var hash = getHash(nodeToRemove);
-        ring.remove(hash);
-        values.remove(new NodeServer(nodeToRemove));
+        var virtualNodes = vtnMap.get(nodeToRemove);
+        for (VirtualNode vn : virtualNodes) {
+            var next = ring.tailMap(vn.hash(), false).firstEntry();
+            if (next == null) {
+                next = ring.firstEntry();
+            }
+
+            ring.get(next.getKey()).putAll(ring.get(vn.hash()));
+            ring.remove(vn.hash());
+        }
     }
 
     @Override
     public List<NodeServerWithData> nodeServers() {
-        return ring.values().stream()
-            .map(nodeServer -> new NodeServerWithData(nodeServer.name(), values.get(nodeServer)))
+        return vtnMap.values().stream()
+            .flatMap(Collection::stream)
+            .map(virtualNode -> new NodeServerWithData(virtualNode.name(), ring.get(virtualNode.hash())))
             .toList();
     }
 
     private String getHash(String key) {
         return Hashing
-            .sha256()
+            .sha1()
             .hashString(key, UTF_8)
             .toString();
     }
