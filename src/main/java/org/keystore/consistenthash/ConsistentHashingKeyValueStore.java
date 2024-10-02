@@ -12,6 +12,12 @@ import java.util.TreeMap;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+/**
+ * This implementation is an abstraction on the idea of a ring used for consistent hashing.
+ * The intention here was to implement the logic to see how it works and how virtual nodes
+ * help creating evenly distributed partitions.
+ * TODO: Add thread-safety support.
+ */
 public class ConsistentHashingKeyValueStore implements KeyValueStore {
     private final TreeMap<String, TreeMap<String, String>> ring = new TreeMap<>(); // virtual node hash -> key values
     private final Map<String, List<VirtualNode>> vtnMap = new HashMap<>(); // node server name -> list of VirtualNodes
@@ -92,12 +98,12 @@ public class ConsistentHashingKeyValueStore implements KeyValueStore {
     public void removeNode(String nodeToRemove) {
         var virtualNodes = vtnMap.get(nodeToRemove);
         for (VirtualNode vn : virtualNodes) {
-            var next = ring.tailMap(vn.hash(), false).firstEntry();
-            if (next == null) {
-                next = ring.firstEntry();
+            var nextNodeEntry = ring.tailMap(vn.hash(), false).firstEntry();
+            if (nextNodeEntry == null) {
+                nextNodeEntry = ring.firstEntry();
             }
 
-            ring.get(next.getKey()).putAll(ring.get(vn.hash()));
+            ring.get(nextNodeEntry.getKey()).putAll(ring.get(vn.hash()));
             ring.remove(vn.hash());
         }
     }
