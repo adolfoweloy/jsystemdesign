@@ -66,26 +66,26 @@ class ConsistentHashingKeyValueStoreTest {
                 .containsAllEntriesOf(dataBeforeRemovingNode);
     }
 
-//    @Test
-//    void dataShouldBeDistributedEvenlyAmongNodes() {
-//        var store = KeyValueStore.consistentHashing(
-//                "node1", "node2", "node3", "node4"
-//        );
-//
-//        addDataToStore(data, store);
-//
-//        var nodes = store.nodeServers();
-//        var expectedDataPerNode = data.size() / nodes.size();
-//
-//        for (var node : nodes) {
-//            var actualDataSize = node.data().size();
-//            assertThat(actualDataSize)
-//                    .isBetween(
-//                            expectedDataPerNode - 1,
-//                            expectedDataPerNode + 1
-//                    );
-//        }
-//    }
+    @Test
+    void dataShouldBeDistributedEvenlyAmongNodes() {
+        var store = KeyValueStore.consistentHashing(
+                "node1", "node2", "node3", "node4"
+        );
+
+        addDataToStore(data, store);
+
+        var nodes = store.nodeServers();
+        var expectedDataPerNode = data.size() / nodes.size();
+
+        for (var node : nodes) {
+            var actualDataSize = node.data().size();
+            assertThat(actualDataSize)
+                    .isBetween(
+                            expectedDataPerNode - 1,
+                            expectedDataPerNode + 1
+                    );
+        }
+    }
 
 
 }
