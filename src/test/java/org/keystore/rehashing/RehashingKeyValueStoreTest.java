@@ -70,21 +70,20 @@ class RehashingKeyValueStoreTest {
     @Test
     void dataShouldBeDistributedEvenlyAmongNodes() {
         var store = KeyValueStore.rehashing(
-            "node1", "node2", "node3", "node4"
+                "node1", "node2", "node3", "node4"
         );
 
         addDataToStore(data, store);
 
-        var nodes = store.nodeServers();
-        var expectedDataPerNode = data.size() / nodes.size();
+        var nodesSizes = store.nodesSizes();
+        var expectedDataPerNode = data.size() / nodesSizes.size();
 
-        for (var node : nodes) {
-            var actualDataSize = node.data().size();
-            assertThat(actualDataSize)
-                .isBetween(
-                    expectedDataPerNode - 1,
-                    expectedDataPerNode + 1
-                );
+        for (var size : nodesSizes) {
+            assertThat(size)
+                    .isBetween(
+                            expectedDataPerNode - 1,
+                            expectedDataPerNode + 1
+                    );
         }
     }
 

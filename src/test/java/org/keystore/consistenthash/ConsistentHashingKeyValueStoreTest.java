@@ -74,12 +74,10 @@ class ConsistentHashingKeyValueStoreTest {
 
         addDataToStore(data, store);
 
-        var nodes = store.nodeServers();
-        var expectedDataPerNode = data.size() / nodes.size();
+        var expectedDataPerNode = data.size() / store.nodesSizes().size();
 
-        for (var node : nodes) {
-            var actualDataSize = node.data().size();
-            assertThat(actualDataSize)
+        for (var size : store.nodesSizes()) {
+            assertThat(size)
                     .isBetween(
                             expectedDataPerNode - 1,
                             expectedDataPerNode + 1

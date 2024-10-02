@@ -3,10 +3,8 @@ package org.keystore.consistenthash;
 import com.google.common.hash.Hashing;
 import org.keystore.KeyValueStore;
 import org.keystore.NodeServer;
-import org.keystore.NodeServerWithData;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,11 +103,10 @@ public class ConsistentHashingKeyValueStore implements KeyValueStore {
     }
 
     @Override
-    public List<NodeServerWithData> nodeServers() {
-        return vtnMap.values().stream()
-            .flatMap(Collection::stream)
-            .map(virtualNode -> new NodeServerWithData(virtualNode.name(), ring.get(virtualNode.hash())))
-            .toList();
+    public List<Integer> nodesSizes() {
+        return ring.values().stream()
+                .map(TreeMap::size)
+                .toList();
     }
 
     private String getHash(String key) {
