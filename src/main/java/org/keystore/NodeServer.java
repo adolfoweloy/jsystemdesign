@@ -1,4 +1,4 @@
-package org.keystore.consistenthash;
+package org.keystore;
 
 public record NodeServer(String name) implements Comparable<NodeServer> {
     @Override

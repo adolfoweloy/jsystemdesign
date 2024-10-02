@@ -2,6 +2,7 @@ package org.keystore.consistenthash;
 
 import com.google.common.hash.Hashing;
 import org.keystore.KeyValueStore;
+import org.keystore.NodeServer;
 import org.keystore.NodeServerWithData;
 
 import java.util.ArrayList;
