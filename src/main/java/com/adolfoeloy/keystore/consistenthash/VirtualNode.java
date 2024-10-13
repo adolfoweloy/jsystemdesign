@@ -1,6 +1,6 @@
-package org.keystore.consistenthash;
+package com.adolfoeloy.keystore.consistenthash;
 
-import org.keystore.NodeServer;
+import com.adolfoeloy.keystore.NodeServer;
 
 public record VirtualNode(String hash, NodeServer nodeServer, int replica)
         implements Comparable<VirtualNode>

@@ -1,4 +1,4 @@
-package org.keystore;
+package com.adolfoeloy.keystore;
 
 import java.util.List;
 

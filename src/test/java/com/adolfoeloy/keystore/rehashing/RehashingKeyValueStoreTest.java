@@ -1,15 +1,15 @@
-package org.keystore.rehashing;
+package com.adolfoeloy.keystore.rehashing;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.keystore.KeyValueStore;
+import com.adolfoeloy.keystore.KeyValueStore;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.keystore.KeyStoreTestUtils.addDataToStore;
-import static org.keystore.KeyStoreTestUtils.allKeyValuePairsFrom;
+import static com.adolfoeloy.keystore.KeyStoreTestUtils.addDataToStore;
+import static com.adolfoeloy.keystore.KeyStoreTestUtils.allKeyValuePairsFrom;
 
 class RehashingKeyValueStoreTest {
 

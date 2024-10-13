@@ -1,7 +1,7 @@
-package org.keystore;
+package com.adolfoeloy.keystore;
 
-import org.keystore.consistenthash.ConsistentHashingKeyValueStore;
-import org.keystore.rehashing.RehashingKeyValueStore;
+import com.adolfoeloy.keystore.consistenthash.ConsistentHashingKeyValueStore;
+import com.adolfoeloy.keystore.rehashing.RehashingKeyValueStore;
 
 public interface KeyValueStore extends KeyValueStoreClient, KeyValueStoreManager {
 

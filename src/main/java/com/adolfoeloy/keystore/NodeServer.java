@@ -1,4 +1,4 @@
-package org.keystore;
+package com.adolfoeloy.keystore;
 
 /**
  * Represents a node to which key-value entries will be stored.

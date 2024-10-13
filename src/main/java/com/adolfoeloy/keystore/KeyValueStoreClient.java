@@ -1,4 +1,4 @@
-package org.keystore;
+package com.adolfoeloy.keystore;
 
 /**
  * Ideally the client of this key-value store should rely on put and get methods.

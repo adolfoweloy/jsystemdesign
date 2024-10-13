@@ -1,6 +1,6 @@
-package org.keystore.rehashing;
+package com.adolfoeloy.keystore.rehashing;
 
-import org.keystore.KeyValueStore;
+import com.adolfoeloy.keystore.KeyValueStore;
 
 import java.util.HashMap;
 import java.util.HashSet;

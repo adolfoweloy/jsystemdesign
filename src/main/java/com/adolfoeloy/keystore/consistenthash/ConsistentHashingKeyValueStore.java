@@ -1,8 +1,8 @@
-package org.keystore.consistenthash;
+package com.adolfoeloy.keystore.consistenthash;
 
 import com.google.common.hash.Hashing;
-import org.keystore.KeyValueStore;
-import org.keystore.NodeServer;
+import com.adolfoeloy.keystore.KeyValueStore;
+import com.adolfoeloy.keystore.NodeServer;
 
 import java.util.ArrayList;
 import java.util.HashMap;

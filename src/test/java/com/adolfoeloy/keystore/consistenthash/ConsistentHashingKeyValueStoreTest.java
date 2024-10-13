@@ -1,15 +1,15 @@
-package org.keystore.consistenthash;
+package com.adolfoeloy.keystore.consistenthash;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.keystore.KeyValueStore;
+import com.adolfoeloy.keystore.KeyValueStore;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.keystore.KeyStoreTestUtils.addDataToStore;
-import static org.keystore.KeyStoreTestUtils.allKeyValuePairsFrom;
+import static com.adolfoeloy.keystore.KeyStoreTestUtils.addDataToStore;
+import static com.adolfoeloy.keystore.KeyStoreTestUtils.allKeyValuePairsFrom;
 
 class ConsistentHashingKeyValueStoreTest {
     private final Map<String, String> data = new HashMap<>();
