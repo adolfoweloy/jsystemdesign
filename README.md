@@ -14,4 +14,5 @@ Motivated by the ideas above, I created this repository as a place to create som
 
 ### Labs
 
-* Key-value store
+- [Key-value store](src/main/java/com/adolfoeloy/keystore) 
+- [Caching](src/main/java/com/adolfoeloy/cache)
